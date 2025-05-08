@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+.wwebjs_cache
+wwebjs_auth
+session
+.git
+.gitignore
+README.md 
