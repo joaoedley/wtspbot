@@ -1,0 +1,32 @@
+# Dependências
+node_modules/
+package-lock.json
+
+# Arquivos de ambiente
+.env
+config.js
+
+# Logs
+*.log
+npm-debug.log*
+
+# Diretórios de cache
+.cache/
+.wwebjs_cache/
+wwebjs_auth/
+session/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs e editores
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Arquivos temporários
+*.tmp
+*.temp
+

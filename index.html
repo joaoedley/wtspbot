@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ratão Lanches - QR Code</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+        #qrButton {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 20px;
+        }
+        #qrButton:hover {
+            background-color: #128C7E;
+        }
+        #qrCode {
+            margin: 20px auto;
+            display: none;
+            max-width: 300px;
+        }
+        #qrCode img {
+            width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: white;
+        }
+        #status {
+            margin: 10px 0;
+            color: #666;
+            font-size: 16px;
+        }
+        .loading {
+            display: none;
+            margin: 10px 0;
+            color: #666;
+        }
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 5px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Ratão Lanches - Conexão WhatsApp</h2>
+        <button id="qrButton">Gerar QR Code</button>
+        <div id="status"></div>
+        <div id="loading" class="loading">Gerando QR Code...</div>
+        <div id="qrCode"></div>
+        
+        <div class="instructions">
+            <h3>Como conectar:</h3>
+            <ol>
+                <li>Clique no botão "Gerar QR Code" acima</li>
+                <li>Abra o WhatsApp no seu celular</li>
+                <li>Toque em Menu ou Configurações</li>
+                <li>Selecione "WhatsApp Web"</li>
+                <li>Escaneie o QR Code que aparecer</li>
+            </ol>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const qrButton = document.getElementById('qrButton');
+        const qrCode = document.getElementById('qrCode');
+        const status = document.getElementById('status');
+        const loading = document.getElementById('loading');
+
+        qrButton.addEventListener('click', () => {
+            qrCode.style.display = 'none';
+            status.textContent = '';
+            loading.style.display = 'block';
+            qrButton.disabled = true;
+            socket.emit('generateQR');
+        });
+
+        socket.on('qr', (qr) => {
+            loading.style.display = 'none';
+            qrCode.style.display = 'block';
+            qrCode.innerHTML = `<img src="${qr}" alt="QR Code">`;
+            status.textContent = 'Escaneie o QR Code com seu WhatsApp';
+            qrButton.disabled = false;
+        });
+
+        socket.on('authenticated', () => {
+            loading.style.display = 'none';
+            qrCode.style.display = 'none';
+            status.textContent = '✅ Conectado com sucesso!';
+            qrButton.disabled = false;
+        });
+
+        socket.on('connect_error', (error) => {
+            loading.style.display = 'none';
+            status.textContent = '❌ Erro ao conectar com o servidor';
+            qrButton.disabled = false;
+            console.error('Erro de conexão:', error);
+        });
+    </script>
+</body>
+</html> 
